@@ -1,0 +1,17 @@
+"""
+Q5
+Lylah Majernik
+HW3
+"""
+
+To change CSV delimiter using Pandas:
+
+
+1. df = pd.read_csv('exampleComma.csv', sep=',')
+
+Open csv file and conver it to dataframe.
+
+2. df.to_csv('exampleStars.csv', sep='*')
+
+Python recognizes the comma as the deliminator. 
+When it re-writes the csv file it willl now use * as the deliminator. 
