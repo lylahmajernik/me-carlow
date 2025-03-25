@@ -1,0 +1,7 @@
+Flask works by using a specific port.
+You can name the port in app.run(), or it 
+will default be 5000. If you tried to run 2 copies
+w/ port = 9999, the second one would fail.
+You could fix this by renaming the second
+port something different, like 9998, so they could 
+run at the same time.

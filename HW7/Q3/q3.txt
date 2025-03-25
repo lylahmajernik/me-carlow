@@ -1,0 +1,5 @@
+The host parameter of app.run defaults to localhost,
+which is 127.0.0.1. Meaning it is only acessible on 
+your computer. In the ex, host = 0.0.0.0, which is used 
+when you want to be able to run your app on multiple
+devices in the same network (ex Carlow PCs). 
