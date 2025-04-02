@@ -4,93 +4,94 @@ from flask import Flask, jsonify, request, json
 
 app = Flask(__name__)
 
-# {
-#   "ID": "12345",
-#   "name": "jeff",
-#   "email": "jeff@jeff.com",
-#   "year": "2025",
-#   "phone": "1112223333",
-#   "status": "on"
-# }
+fileS = open('data/student.csv', 'w')
+fileT = open('data/teacher.csv', 'w')
+fileC = open('data/class.csv', 'w')
 
+students = []
+teachers = []
+classes = []
 
+#EX STUDENT : {"ID":"1","name":"1","email":"1","phone":"1","year":"1","status":"1"}
+#EX TEACHER: {"ID":"1","name":"1","email":"1","phone":"1"}
+#EX CLASS: {"name":"1","ID":"1","teacherID":"1"}
 
-user_input = []
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ##--Student
-
-@app.route('/student',methods=['POST','GET','DELETE'])
+@app.route('/student', methods=['POST', 'GET', 'DELETE'])
 def student():
     data = request.get_json()
- #POST   
+    
+    if not data:
+            return jsonify({'error': 'Need data'}), 500
+    
     if request.method == 'POST':
-    #ID    
-        if data.get('ID') is None:
-            error_dict = dict(error='ID is required')
-            return jsonify(error_dict),500
-        # ID = data.get('ID')
-        # return data.get('ID') 
-    #Name    
-        if data.get('name') is None:
-            error_dict = dict(error='name is required')
-            return jsonify(error_dict),500
-        # return data.get('name')
-        # name = data.get('name')
+        required_fields = ['ID', 'name', 'email', 'phone', 'year', 'status']
+               
+        for field in required_fields:
+            if not data.get(field):  
+                return jsonify({'error': f'{field} is required'}),500
+       
+        students.append(data)
         
-    #email
-        if data.get('email') is None:
-             error_dict = dict(error='email is required')
-             return jsonify(error_dict),500
-        # return data.get('email')
-        # email = data.get('email')
-    
-    #phone
-        if data.get('phone') is None:
-             error_dict = dict(error='phone is required')
-             return jsonify(error_dict),500
-        # return data.get('phone')
-        # phone = data.get('phone')
-    
-    #year
-        if data.get('year') is None:
-             error_dict = dict(error='year is required')
-             return jsonify(error_dict),500
-        # return data.get('year')
-        # year = data.get('year')
-    
-    #status
-        if data.get('status') is None:
-              error_dict = dict(error='status is required')
-              return jsonify(error_dict),500
-        # return data.get('status')
-        # status = data.get('status')
-        
-    keys = ['ID', 'name', 'email', 'year', 'phone', 'status']
-    response = {key: data.get(key, 'N/A') for key in keys}
-    return jsonify(response)
+        open('data/student.csv','w')
 
-    # with open(student.csv, 'w') as f:
-    #     json.dump(data,f,ident=2)
+        for s in students:      
+            pretty = json.dumps(s, indent=4)
+            with open('data/student.csv', 'a') as s:
+                s.write(pretty + "\n\n")
+        return jsonify({"Student Added":data})
     
- #DELETE   
+######################################################
     if request.method == 'DELETE':
-            data = request.get_json()
+        required_fields = ['ID']
+        
+        deleteMe = data.get('ID')
+        
+        if data.get('ID') is None:
+            return 'Enter student ID to delete student'
+        
+        for s in students:
+            if s['ID'] == deleteMe:
+                students[:] = [ s for s in students if s.get('ID') != deleteMe]
+        
+        open('data/student.csv','w')
+
+        for s in students:      
+            pretty = json.dumps(s, indent=4)
+            with open('data/student.csv', 'a') as s:
+                s.write(pretty + "\n\n")
             
-            student_id = data.get('ID')
+        return f'Student with ID: {deleteMe} has been deleted.'
+          
+######################################################    
+    if request.method == 'GET':
+        required_fields = ['ID']
+        
+        getMe = data.get('ID')
+        
+        if data.get('ID') is None:
+            return 'Enter student ID to get student info'
+        
+        for s in students:
+            if s['ID'] == getMe:
+                returnn = s
             
-            if not student_id:
-                return jsonify({"error": "Not a valid ID"}), 400
-            
-            keys = ['ID', 'name', 'email', 'year', 'phone', 'status']
-            response = {key: data.get(key, 'N/A') for key in keys}
-            del response
-            return f'student with id {student_id} has been deleted.'
-           
+        return jsonify(returnn)
 
 
 
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
@@ -99,72 +100,173 @@ def student():
 
     
 # ##--Teacher    
-# @app.route('/teacher',methods=['POST','GET','DELETE'])
-# def teacher():
-#     data = request.get_json()
-#  #POST   
-#     if request.method == 'POST':
-#     #ID    
-#         if data.get('ID') is None:
-#             error_dict = dict(error='ID is required')
-#             return jsonify(error_dict),500
-#         return data.get('ID')  
-#         ID = data.get('ID')
-        
-#     #Name    
-#         if data.get('name') is None:
-#             error_dict = dict(error='name is required')
-#             return jsonify(error_dict),500
-#         return data.get('name')
-#         name = data.get('name')
-        
-#     #email
-#         if data.get('email') is None:
-#              error_dict = dict(error='email is required')
-#              return jsonify(error_dict),500
-#         return data.get('email')
-#         name = data.get('email')
+@app.route('/teacher', methods=['POST', 'GET', 'DELETE'])
+def teacher():
+    data = request.get_json()
     
-#     #phone
-#         if data.get('phone') is None:
-#              error_dict = dict(error='phone is required')
-#              return jsonify(error_dict),500
-#         return data.get('phone')
-#         phone = data.get('phone')
+    if not data:
+            return jsonify({'error': 'Need data'}), 500
+    
+    if request.method == 'POST':
+        required_fields = ['ID', 'name', 'email', 'phone']               
+        for field in required_fields:
+            if not data.get(field):  
+                return jsonify({'error': f'{field} is required'}),500
+       
+        teachers.append(data)
         
+        open('data/teacher.csv','w')
+
+        for t in teachers:      
+            pretty = json.dumps(t, indent=4)
+            with open('data/teacher.csv', 'a') as t:
+                t.write(pretty + "\n\n")
+        return jsonify({"teacher Added":data})
+    
+######################################################
+    if request.method == 'DELETE':
+        required_fields = ['ID']
+        
+        deleteMe = data.get('ID')
+        
+        if data.get('ID') is None:
+            return 'Enter teacher ID to delete teacher'
+        
+        for t in teachers:
+            if t['ID'] == deleteMe:
+                teachers[:] = [ t for t in teachers if t.get('ID') != deleteMe]
+        
+        open('data/teacher.csv','w')
+
+        for t in teachers:      
+            pretty = json.dumps(t, indent=4)
+            with open('data/teacher.csv', 'a') as t:
+                t.write(pretty + "\n\n")
+            
+        return f'teacher with ID: {deleteMe} has been deleted.'
+          
+######################################################    
+    if request.method == 'GET':
+            required_fields = ['ID']
+            
+            getMe = data.get('ID')
+            
+            if data.get('ID') is None:
+                return 'Enter teacher ID to get teacher info'
+            
+            for t in teachers:
+                if t['ID'] == getMe:
+                    returnn = t
+                
+            return jsonify(returnn)
+        
+#Sorry I have to submit before I finish this part.        
+@app.route('/teacher/<ID>', methods=['GET'])
+def teacherid(ID):
+    tid = []
+    tid = [t for t in teachers if t['ID'] == ID]
+    
+    if len(tid) ==0:
+        return jsonify({"error":"teacher with this ID not found."})
+    
+    if request.args.get('count') == 'true':
+        i = 0
+        for c in classes:
+            if c['teacherID'] == ID:
+                i+=1
+              
+
+        for t in teachers:
+            if t['ID'] == ID:
+                teacher['count'] = ('count', i) 
+                returnnn = t
+            
+        return jsonify(returnnn)
+                
+          
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+
 # ##--Class
-# @app.route('/class',methods=['POST','GET','DELETE'])
-# def student():
-#     data = request.get_json()
-#  #POST   
-#     if request.method == 'POST':
-#     #ID    
-#         if data.get('ID') is None:
-#             error_dict = dict(error='ID is required')
-#             return jsonify(error_dict),500
-#         return data.get('ID')  
-#         ID = data.get('ID')
-        
-#     #Name    
-#         if data.get('name') is None:
-#             error_dict = dict(error='name is required')
-#             return jsonify(error_dict),500
-#         return data.get('name')
-#         name = data.get('name')
-        
-#     #department
-#         if data.get('department') is None:
-#              misc = dict(misc='Misc.')
-#              return jsonify(misc)
-#         return data.get('department')
-#         department = data.get('department')
+@app.route('/class', methods=['POST', 'GET', 'DELETE'])
+def classs():
+    data = request.get_json()
     
-#     #teacherID
-#         if data.get('teacherID') is None:
-#              error_dict = dict(error='teacherID is required')
-#              return jsonify(error_dict),500
-#         return data.get('teacherID')
-#         teacherID = data.get('teacherID')
+    if not data:
+            return jsonify({'error': 'Need data'}), 500
+    
+    if request.method == 'POST':
+        required_fields = ['ID', 'name', 'teacherID']
+        
+        data['department'] = data.get('department', 'Misc')        
+       
+        for field in required_fields:
+            if not data.get(field):  
+                return jsonify({'error': f'{field} is required'}),500
+       
+        classes.append(data)
+        
+        open('data/class.csv','w')
+
+        for c in classes:      
+            pretty = json.dumps(c, indent=4)
+            with open('data/class.csv', 'a') as t:
+                t.write(pretty + "\n\n")
+        return jsonify({"Class Added":data})
+    
+######################################################
+    if request.method == 'DELETE':
+        
+        deleteMe = request.args.get('ID')
+        
+        if deleteMe == None:
+            return jsonify({"error":"need data"})
+        for c in classes:
+            if c['ID'] == deleteMe:
+                classes[:] = [ c for c in classes if c.get('ID') != deleteMe]
+        
+        open('data/class.csv','w')
+
+        for c in classes:      
+            pretty = json.dumps(c, indent=4)
+            with open('data/class.csv', 'a') as t:
+                t.write(pretty + "\n\n")
+            
+        return f'class with ID: {deleteMe} has been deleted.'
+######################################################       
+    if request.method == 'GET':
+            if request.args.get('count') == 'true':
+                return jsonify({'count': len(classes)})
+            else:
+                required_fields = ['ID']
+                
+                getMe = data.get('ID')
+                
+                if data.get('ID') is None:
+                    return 'Enter id to get class'
+                
+                for c in classes:
+                    if c['ID'] == getMe:
+                        returnn = c
+                    
+                return jsonify(returnn)
+            
+            
+        
+        
+
+        
+        
+    
+
+
+
+
 
 app.run(host='0.0.0.0', port=9999, debug=False)
 
