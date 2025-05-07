@@ -1,0 +1,54 @@
+"""
+Lylah Majernik
+Programming 2 Final
+Submitted 5/7/2025
+"""
+
+There are two parts to my addition to this API: one boring one that I did actually implement, and one fun one that is just hypothetical. 
+
+For my actual addition to the API, I made it so that essentially every end point that required ID as post data could also take Name, without having to add additional columns to the sql tables. Any time only ID was given, name was also shown in the returned object. Because random IDs are assigned for trainer & team, I thought it would be easier for the user if they could enter the name instead in case they forgot the ID. Coded for no case sensitivity. It did take a little longer, but it wasn’t terrible to do. It basically just required a big block at the beginning of my db connection where I would either:
+ “select all from table where lower(name) = lower(nameInput)
+-make that a row
+-take the row[‘ID’]
+Set that ID =IDinput even if there was none.
+
+
+For the opposite, I would
+“Select all from table where ID = IDinput,
+-make that a row,
+Set ID’s Name to row[“Name”]
+
+So on and so forth backwards and forwards for every single post data input you can give on this project. I’m pretty happy I did it, because it made my return objects a little more informative too. 
+
+For my ~fun~ addition to this code, I think
+it would be interesting to create a way to build 
+XP as teams compete in more battles. 
+
+As I'm thinking about this, I'm realizing there'd need to be some way to seperate 
+a specific pokemon that belongs to the team from just all versions of that pokemon. 
+
+I'd probably start by adding an XP column to the membership table. 
+
+When a team wins a battle, I'd want to select all PokemonID where TeamID = winning team. 
+
+I'd probably set this to a variable like winners = fetchall()'
+
+then for pokemon in winners:
+    update pokemon[XP column]
+    set xp = xp * 1.75
+    
+    (or, I could do xp = xp * some-function-based-off-of-team-wins)
+
+
+that would look like:
+    
+    multiplier = wins *.5
+    
+    and then in in membership, pokemon xp = base xp * multiplier
+    
+        
+So, in theory, the winners would have their xp adjusted while the non-team-assigned pokemon would not have anything change. In other words, Pikachu has 1 xp, team 1’s Pikachu has 5 xp because they won one time, and team 2’s Pikachu has 25 xp because they won 5 times. The issue would be the loss of xp when deleting a member from a team. So, it could work in a little API bubble, but would be significantly more complicated if you were creating a real game. That is, unless, you styled it as a roguelike/dungeon crawler where you only have your team, members can come or leave, but when they are gone they are perma-dead, and when your team loses you are also permanently dead/no data needs to be stored. As you achieve more endings in the game, your likelihood of better members for your random team increases/you can add better members….. So forth and so on. 
+
+With time and creative freedom I think it would be very fun to code a roguelike game. That is one of my small personal life goals. Perhaps this final will make that less daunting in the future. 
+
+Have a good summer :) 
